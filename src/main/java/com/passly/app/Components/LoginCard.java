@@ -35,7 +35,7 @@ public class LoginCard extends Card {
     public LoginCard() {
         username = new SimpleStringProperty(this, "Username", "");
         password = new SimpleStringProperty(this, "Password", "");
-        setHeader(new CardHeader("Login to Nebula", "Enter your username and password to access your account"));
+        setHeader(new CardHeader("Login to Passly", "Enter your username and password to access your account"));
         setBody(new LoginCardBody());
         setFooter(new LoginCardFooter());
         setMaxSize(WIDTH, HEIGHT);
@@ -94,7 +94,6 @@ public class LoginCard extends Card {
         }
 
         private void setChildren() {
-
             TextInput usernameInput = new TextInput(username, "Username");
             PasswordInput passwordInput = new PasswordInput(password, "Password");
             getChildren().addAll(usernameInput, passwordInput);
@@ -110,7 +109,9 @@ public class LoginCard extends Card {
                 throw new Exception("Empty Password");
             } else {
                 ResultSet dataFromServer = UserService.login(username, password);
-                loginSuccess(dataFromServer);
+                if (dataFromServer != null) {
+                    loginSuccess(dataFromServer);
+                }
             }
         } catch (Exception e) {
             Alert alert = new Alert(Alert.AlertType.WARNING, e.getMessage());

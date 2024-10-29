@@ -9,7 +9,6 @@ import com.passly.app.Services.SQL.SQL;
 import java.sql.Blob;
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.Map;
 import javafx.beans.property.SimpleObjectProperty;
@@ -89,7 +88,6 @@ public class User {
         fields.put(this.username.getName(), this.username);
         fields.put(this.phoneNumber.getName(), this.phoneNumber);
         fields.put(this.gender.getName(), this.gender);
-//        fields.put("Image", this.image);
         return fields;
     }
 }

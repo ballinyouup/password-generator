@@ -27,7 +27,6 @@ public class Context {
         if (user == null) {
             Context.user = new SimpleObjectProperty(new User());
         }
-        System.out.println(user.getValue().toString());
         return (User) user.getValue();
     }
 

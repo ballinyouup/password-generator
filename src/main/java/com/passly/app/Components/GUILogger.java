@@ -41,7 +41,6 @@ public class GUILogger extends VBox {
 
     private void addFields(ObservableList<Node> nodes, Collection<SimpleStringProperty> list) {
         for (SimpleStringProperty field : list) {
-            System.out.println(field);
             Label fieldLabel = logLabel(field);
             nodes.add(fieldLabel);
         }

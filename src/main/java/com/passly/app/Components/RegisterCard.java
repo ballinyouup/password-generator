@@ -20,7 +20,6 @@ import java.util.Map;
 import javafx.beans.property.SimpleObjectProperty;
 import javafx.beans.property.SimpleStringProperty;
 import javafx.collections.FXCollections;
-import javafx.geometry.Insets;
 import javafx.scene.control.Button;
 import javafx.scene.control.ComboBox;
 import javafx.scene.control.Label;
@@ -50,10 +49,10 @@ public class RegisterCard extends Card {
         image = new SimpleObjectProperty<>(this, "Image", null);
         imagePath = new SimpleStringProperty(this, "Image Path", "");
 
-        CardHeader cardHeader = new CardHeader("Register to Nebula", "Fill out the form to create an account");
+        CardHeader cardHeader = new CardHeader("Register to Passly", "Fill out the form to create an account");
         setHeader(cardHeader);
         setBody(new RegisterCardBody());
-        setFooter(createFooter());
+        setFooter(new RegisterCardFooter());
         setMaxSize(WIDTH, HEIGHT);
     }
 
@@ -66,7 +65,6 @@ public class RegisterCard extends Card {
 
         private void setStyles() {
             setSpacing(8.0);
-            setChildren();
         }
 
         private void setChildren() {
@@ -86,9 +84,7 @@ public class RegisterCard extends Card {
             comboBox.getSelectionModel().selectFirst();
             gender.set(comboBox.getSelectionModel().getSelectedItem().toString());
             comboBox.getSelectionModel().selectedItemProperty().addListener(e -> {
-                System.out.println("Before update gender: " + gender.getValue());
                 gender.set(comboBox.getSelectionModel().getSelectedItem().toString());
-                System.out.println("After update gender: " + gender.getValue());
             });
 
             Button uploadImageButton = new Button("Upload Profile Image");
@@ -102,22 +98,43 @@ public class RegisterCard extends Card {
 
     }
 
-    private VBox createFooter() {
-        VBox cardFooter = new VBox();
-        cardFooter.getStyleClass().add("card-footer");
-        cardFooter.setSpacing(28.0);
+    private class RegisterCardFooter extends VBox {
 
-        Button registerButton = new Button("Register");
-        registerButton.getStyleClass().add(Styles.ACCENT);
-        registerButton.setStyle("-fx-font: 16px Poppins");
-        registerButton.setMaxSize(WIDTH, HEIGHT);
+        public RegisterCardFooter() {
+            setStyles();
+            setChildren();
+        }
 
-        registerButton.setOnMouseClicked(e -> UserService.registerUser(getFields(), image));
+        private class RegisterFooterButton extends Button {
 
-        Link loginLink = new Link(Route.LOGIN, "Already have an account? Click here to login!");
-        cardFooter.getChildren().addAll(registerButton, loginLink);
+            public RegisterFooterButton() {
+                setStyles();
+                setHandlers();
+            }
 
-        return cardFooter;
+            private void setStyles() {
+                setText("Register");
+                getStyleClass().add(Styles.ACCENT);
+                setStyle("-fx-font: 16px Poppins");
+                setMaxSize(WIDTH, HEIGHT);
+            }
+
+            private void setHandlers() {
+                setOnMouseClicked((_) -> UserService.registerUser(getFields(), image));
+
+            }
+        }
+
+        private void setChildren() {
+            Link loginLink = new Link(Route.LOGIN, "Already have an account? Click here to login!");
+            getChildren().addAll(new RegisterFooterButton(), loginLink);
+        }
+
+        private void setStyles() {
+            getStyleClass().add("card-footer");
+            setSpacing(28.0);
+        }
+
     }
 
     public void handleFileInput() {

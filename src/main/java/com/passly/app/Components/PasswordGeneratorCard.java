@@ -34,12 +34,9 @@ public class PasswordGeneratorCard extends Card {
     public PasswordGeneratorCard() {
         CardHeader cardHeader = new CardHeader("Password Generator", "Generate a new password based on settings");
         cardHeader.setBorder(Context.DEBUG ? Border.stroke(Color.WHITE) : null);
-
-        var body = new PasswordGeneratorCardBody();
-        var footer = new PasswordGeneratorCardFooter();
         setHeader(cardHeader);
-        setBody(body);
-        setFooter(footer);
+        setBody(new PasswordGeneratorCardBody());
+        setFooter(new PasswordGeneratorCardFooter());
     }
 
     private class PasswordGeneratorCardBody extends VBox {
