@@ -1,0 +1,127 @@
+/*
+Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
+Click nbfs://nbhost/SystemFileSystem/Templates/Other/CascadeStyleSheet.css to edit this template
+*/
+/* 
+    Created on : Oct 26, 2024, 8:37:47 PM
+    Author     : bryan
+*/
+
+@font-face {
+    font-family: "Poppins";
+    src: url("../fonts/Poppins-Thin.ttf");
+}
+
+@font-face {
+    font-family: "Poppins";
+    src: url("../fonts/Poppins-ExtraLight.ttf");
+}
+
+@font-face {
+    font-family: "Poppins";
+    src: url("../fonts/Poppins-Light.ttf");
+}
+
+@font-face {
+    font-family: "Poppins";
+    src: url("../fonts/Poppins-Regular.ttf");
+}
+
+@font-face {
+    font-family: "Poppins";
+    src: url("../fonts/Poppins-Medium.ttf");
+}
+
+@font-face {
+    font-family: "Poppins";
+    src: url("../fonts/Poppins-SemiBold.ttf");
+}
+
+@font-face {
+    font-family: "Poppins";
+    src: url("../fonts/Poppins-Bold.ttf");
+}
+
+@font-face {
+    font-family: "Poppins";
+    src: url("../fonts/Poppins-ExtraBold.ttf");
+}
+
+@font-face {
+    font-family: "Poppins";
+    src: url("../fonts/Poppins-Black.ttf");
+}
+
+
+.card > .container {
+  -fx-background-color: -color-bg-default;
+  -fx-alignment: TOP_LEFT;
+  -fx-padding: 2em 1em 2em 1em;
+  -fx-spacing: 1em;
+  -fx-border-color: -color-border-default;
+  -fx-border-width: 1px;
+  -fx-border-radius: 0px;
+}
+
+
+
+.label {
+    -fx-font-family: "Poppins";
+    -fx-font-size: 14px;
+}
+
+.sidebar-header {
+    -fx-font-family: "Poppins";
+    -fx-font-size: 24px;
+    -fx-font-weight: 900;
+}
+
+.card-title {
+    -fx-font-family: "Poppins";
+    -fx-font-size: 24px;
+    -fx-font-weight: 900;
+}
+
+.card-subtitle {
+    -fx-font-family: "Poppins";
+    -fx-font-size: 14px;
+}
+
+.button {
+    -fx-background-radius: 0px;
+    -fx-background-insets: 0px;
+    -fx-border-color: -color-border-default;
+    -fx-border-width: 1px;
+    -fx-border-radius: 0px;
+}
+.button.accent {
+    -fx-background-radius: 0px;
+    -fx-background-insets: 0px;
+    -fx-border-width: 0px;
+    -fx-border-radius: 0px;
+}
+
+.button:hover {
+    -fx-cursor: hand;
+}
+
+.text-area {
+    -fx-background-radius: 0px;
+    -fx-background-insets: 0px;
+    -fx-border-width: 0px;
+    -fx-border-radius: 0px;
+    -fx-display-caret: false;
+}
+.text-area .content {
+    -fx-cursor: text;
+    -fx-padding: 0px 0px 0px 0px;
+}
+
+.link:hover {
+    -fx-underline: true;
+    -fx-cursor: hand;
+}
+
+.header {
+    -fx-background: white;
+}
