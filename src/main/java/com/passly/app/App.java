@@ -4,12 +4,10 @@ import com.passly.app.Routes.Dashboard;
 import com.passly.app.Routes.Login;
 import com.passly.app.Routes.Register;
 import atlantafx.base.theme.CupertinoDark;
-import static com.passly.app.Context.env;
 import io.github.cdimascio.dotenv.Dotenv;
 import javafx.application.Application;
 import javafx.stage.Stage;
 import java.io.IOException;
-import java.net.URL;
 
 /**
  * JavaFX App

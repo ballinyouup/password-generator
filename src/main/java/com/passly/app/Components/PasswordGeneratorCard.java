@@ -5,18 +5,21 @@
 package com.passly.app.Components;
 
 import atlantafx.base.controls.Card;
+import atlantafx.base.controls.ProgressSliderSkin;
 import atlantafx.base.theme.Styles;
 import com.passly.app.Context;
-import java.security.SecureRandom;
-import java.util.ArrayList;
-import java.util.List;
+import com.passly.app.Route;
+import com.passly.app.Router;
+import javafx.beans.property.SimpleIntegerProperty;
 import javafx.beans.property.SimpleStringProperty;
 import javafx.geometry.Pos;
 import javafx.scene.control.Button;
+import javafx.scene.control.Label;
+import javafx.scene.control.Slider;
 import javafx.scene.control.TextArea;
 import javafx.scene.layout.Border;
 import javafx.scene.layout.HBox;
-import javafx.scene.layout.Region;
+import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
 
 /**
@@ -26,6 +29,7 @@ import javafx.scene.paint.Color;
 public class PasswordGeneratorCard extends Card {
 
     private final SimpleStringProperty generatedPassword = new SimpleStringProperty(this, "Generated Password", "");
+    private final SimpleIntegerProperty length = new SimpleIntegerProperty(this, "Password Length", 16);
 
     public PasswordGeneratorCard() {
         CardHeader cardHeader = new CardHeader("Password Generator", "Generate a new password based on settings");
@@ -33,24 +37,20 @@ public class PasswordGeneratorCard extends Card {
 
         var body = new PasswordGeneratorCardBody();
         var footer = new PasswordGeneratorCardFooter();
-//        HBox.setHgrow(footer, Priority.ALWAYS);
-//        VBox.setVgrow(footer, Priority.ALWAYS);
-
-//        setMaxSize(Double.MAX_VALUE, Double.MAX_VALUE);
         setHeader(cardHeader);
         setBody(body);
         setFooter(footer);
     }
 
-    private class PasswordGeneratorCardBody extends HBox {
+    private class PasswordGeneratorCardBody extends VBox {
 
         public PasswordGeneratorCardBody() {
             setBorder(Context.DEBUG ? Border.stroke(Color.WHITE) : null);
             setMaxHeight(40);
             TextArea generatedPasswordLabel = new TextArea();
-            setMaxWidth(320);
+            setMaxWidth(520);
             generatedPasswordLabel.textProperty().bind(generatedPassword);
-            generatedPassword.set(Password.generatePassword(12));
+            generatedPassword.set(new Password(length.getValue(), true, true, true).getPassword());
             generatedPasswordLabel.setStyle(
                     """
                     -fx-font-family: Poppins;
@@ -59,7 +59,22 @@ public class PasswordGeneratorCard extends Card {
                     """
             );
 
-            getChildren().add(generatedPasswordLabel);
+            var lengthSlider = createTickSlider();
+            lengthSlider.valueProperty().bindBidirectional(length);
+            lengthSlider.getStyleClass().add(Styles.LARGE);
+            lengthSlider.setSkin(new ProgressSliderSkin(lengthSlider));
+            Label lengthLabel = new Label("Length: " + length.getValue());
+            lengthLabel.setStyle(
+                    """
+                    -fx-font-family: Poppins;
+                    -fx-font-size: 16px;
+                    -fx-font-weight: 400;
+                    """
+            );
+            length.addListener(e -> {
+                lengthLabel.setText("Length: " + length.getValue().toString());
+            });
+            getChildren().addAll(generatedPasswordLabel, lengthLabel, lengthSlider);
         }
     }
 
@@ -74,9 +89,13 @@ public class PasswordGeneratorCard extends Card {
             Button generateButton = new Button("GENERATE");
             generateButton.getStyleClass().addAll(Styles.LARGE);
             generateButton.setOnMouseClicked(_ -> {
-                generatedPassword.set(Password.generatePassword(12));
+                generatedPassword.set(new Password(length.getValue(), true, true, true).getPassword());
             });
             Button saveButton = new Button("SAVE");
+            saveButton.setOnMouseClicked(e -> {
+                Context.getUser().addPassword(new Password(generatedPassword.getValue()));
+                generatedPassword.set(new Password(length.getValue(), true, true, true).getPassword());
+            });
 
             saveButton.getStyleClass().add(Styles.LARGE);
 
@@ -84,23 +103,14 @@ public class PasswordGeneratorCard extends Card {
         }
     }
 
-    private class Password {
-
-        private static final String ALPHABET = "abcdefghijklmnopqrstuvwxyz";
-        private static final String SYMBOLS = "`~!@#$%^&*()_=+{};:',.?/";
-        private static final String NUMBERS = "0123456789";
-        private static final String UPPERCASE = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
-        private static final SecureRandom random = new SecureRandom();
-        private static final ArrayList<String> list = new ArrayList<>(List.of(ALPHABET, SYMBOLS, NUMBERS, UPPERCASE));
-
-        public static String generatePassword(int length) {
-            StringBuilder password = new StringBuilder();
-            for (int i = 0; i < length; i++) {
-                int randomSet = random.nextInt(0, 4);
-                int randomNumber = random.nextInt(0, list.get(randomSet).length());
-                password.append(list.get(randomSet).charAt(randomNumber));
-            }
-            return password.toString();
-        }
+    private Slider createTickSlider() {
+        var slider = new Slider(8, 24, 16);
+        slider.setShowTickLabels(true);
+        slider.setShowTickMarks(true);
+        slider.setMajorTickUnit(4);
+        slider.setBlockIncrement(12);
+        slider.setMinorTickCount(4);
+        slider.setSnapToTicks(true);
+        return slider;
     }
 }

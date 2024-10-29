@@ -4,14 +4,18 @@
  */
 package com.passly.app.Models;
 
+import com.passly.app.Components.Password;
 import com.passly.app.Services.SQL.SQL;
 import java.sql.Blob;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.Map;
 import javafx.beans.property.SimpleObjectProperty;
 import javafx.beans.property.SimpleStringProperty;
+import javafx.collections.FXCollections;
+import javafx.collections.ObservableList;
 
 /**
  *
@@ -24,6 +28,7 @@ public class User {
     private final SimpleStringProperty phoneNumber;
     private final SimpleStringProperty gender;
     private final SimpleObjectProperty image;
+    private final ObservableList<Password> passwords = FXCollections.observableArrayList();
 
     public User() {
         this.fullName = new SimpleStringProperty(this, "Full Name", "");
@@ -68,6 +73,14 @@ public class User {
 
     public SimpleObjectProperty getImageProperty() {
         return this.image;
+    }
+
+    public void addPassword(Password password) {
+        passwords.add(password);
+    }
+
+    public ObservableList<Password> getPasswords() {
+        return passwords;
     }
 
     public Map<String, SimpleStringProperty> getFields() {
