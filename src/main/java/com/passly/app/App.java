@@ -23,8 +23,6 @@ public class App extends Application {
         Router.setStage(stage);
         Dotenv env = Dotenv.configure().directory("./src/main/resources/com/passly/app").load();
         Context.setEnv(env);
-        System.out.println("Env: " + env);
-        // Register routes with factories instead of instances
         Router.addRoute(Route.LOGIN, () -> new Login());
         Router.addRoute(Route.REGISTER, () -> new Register());
         Router.addRoute(Route.DASHBOARD, () -> new Dashboard());

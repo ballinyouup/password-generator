@@ -4,6 +4,7 @@
  */
 package com.passly.app.Services.User;
 
+import com.passly.app.Components.LoginCard;
 import com.passly.app.Route;
 import com.passly.app.Router;
 import com.passly.app.Services.Database;
@@ -13,8 +14,11 @@ import com.passly.app.Services.SQL.SQLSelect;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
+import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.Map;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javafx.beans.property.SimpleObjectProperty;
 import javafx.beans.property.SimpleStringProperty;
 import javafx.scene.control.Alert;
@@ -57,6 +61,34 @@ public class UserService {
             alert.show();
         }
         return false;
+    }
+
+    public static ResultSet login(SimpleStringProperty username, SimpleStringProperty password) {
+        try {
+            SQL sql = new SQL(Database.getConnection());
+
+            SQLSelect select = new SQLSelect();
+            select.all()
+                    .from()
+                    .table(SQL.Table.USERS)
+                    .where()
+                    .equals(SQL.Table.Column.USERNAME, username.getValue())
+                    .and()
+                    .equals(SQL.Table.Column.PASSWORD, password.getValue());
+
+            ResultSet rs = sql.executeSelect(select);
+
+            if (rs.next()) {
+                return rs;
+            } else {
+                Alert alert = new Alert(Alert.AlertType.WARNING, "Invalid Username or Password");
+                alert.show();
+                return null;
+            }
+        } catch (SQLException ex) {
+            Logger.getLogger(LoginCard.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        return null;
     }
 
     public static void registerUser(Map<String, SimpleStringProperty> fields, SimpleObjectProperty image) {

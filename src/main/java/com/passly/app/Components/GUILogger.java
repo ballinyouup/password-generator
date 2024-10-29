@@ -6,6 +6,7 @@ package com.passly.app.Components;
 
 import com.passly.app.Context;
 import com.passly.app.Router;
+import java.util.Collection;
 import java.util.Map;
 import javafx.beans.property.SimpleObjectProperty;
 import javafx.beans.property.SimpleStringProperty;
@@ -27,15 +28,27 @@ public class GUILogger extends VBox {
         ObservableList<Node> nodes = FXCollections.observableArrayList();
         Label routeText = logLabel(Router.getCurrentRouteProperty());
         nodes.add(routeText);
-        for (SimpleStringProperty field : list.values()) {
+
+        addFields(nodes, list.values());
+        addObjectList(nodes, obj);
+
+        setAlignment(Pos.TOP_LEFT);
+        if (Context.GUI_DEBUG) {
+            getChildren().addAll(nodes);
+        }
+
+    }
+
+    private void addFields(ObservableList<Node> nodes, Collection<SimpleStringProperty> list) {
+        for (SimpleStringProperty field : list) {
             System.out.println(field);
             Label fieldLabel = logLabel(field);
             nodes.add(fieldLabel);
         }
+    }
 
-        for (SimpleObjectProperty item : obj) {
-            System.out.println(item.getName() + " " + item.getValue());
-
+    private void addObjectList(ObservableList<Node> nodes, SimpleObjectProperty[] objects) {
+        for (SimpleObjectProperty item : objects) {
             Label label = new Label();
             label.setText(item.getName() + ": " + (item.getValue() == null ? "" : item.getValue()));
 
@@ -45,11 +58,6 @@ public class GUILogger extends VBox {
             });
             nodes.add(label);
         }
-        setAlignment(Pos.TOP_LEFT);
-        if (Context.GUI_DEBUG) {
-            getChildren().addAll(nodes);
-        }
-
     }
 
     private Label logLabel(SimpleStringProperty field) {

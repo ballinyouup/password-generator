@@ -13,13 +13,26 @@ import javafx.scene.layout.VBox;
  */
 public class CardHeader extends VBox {
 
-    public CardHeader(String titleText, String subtitleText) {
+    public CardHeader(String title, String subtitle) {
         getStyleClass().add("card-header");
-        Label title = new Label(titleText);
-        title.getStyleClass().add("card-title");
-        Label subtitle = new Label(subtitleText);
-        subtitle.getStyleClass().add("card-subtitle");
-        getChildren().addAll(title, subtitle);
+
+        getChildren().addAll(new CardTitle(title), new CardSubtitle(subtitle));
         setSpacing(8.0);
+    }
+
+    private class CardTitle extends Label {
+
+        public CardTitle(String text) {
+            setText(text);
+            getStyleClass().add("card-title");
+        }
+    }
+
+    private class CardSubtitle extends Label {
+
+        public CardSubtitle(String text) {
+            setText(text);
+            getStyleClass().add("card-subtitle");
+        }
     }
 }

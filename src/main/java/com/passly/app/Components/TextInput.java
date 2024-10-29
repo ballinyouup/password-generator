@@ -7,23 +7,19 @@ package com.passly.app.Components;
 import javafx.beans.property.SimpleStringProperty;
 import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
+import javafx.scene.layout.VBox;
 
 /**
  *
  * @author bryan
  */
-public class TextInput extends TextField {
-
-    private final Label label;
+public class TextInput extends VBox {
 
     public TextInput(SimpleStringProperty value, String labelText) {
-
-        textProperty().bindBidirectional(value);
-        label = new Label(labelText);
+        TextField textInput = new TextField();
+        textInput.textProperty().bindBidirectional(value);
+        Label label = new Label(labelText);
         label.setStyle("-fx-font: 14px Poppins");
-    }
-
-    public Label getLabel() {
-        return this.label;
+        getChildren().addAll(label, textInput);
     }
 }

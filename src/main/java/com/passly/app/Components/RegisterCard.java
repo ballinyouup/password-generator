@@ -52,55 +52,54 @@ public class RegisterCard extends Card {
 
         CardHeader cardHeader = new CardHeader("Register to Nebula", "Fill out the form to create an account");
         setHeader(cardHeader);
-        setBody(createBody());
+        setBody(new RegisterCardBody());
         setFooter(createFooter());
         setMaxSize(WIDTH, HEIGHT);
     }
 
-    private VBox createBody() {
-        VBox cardBody = new VBox();
-        cardBody.getStyleClass().add("card-body");
-        cardBody.setSpacing(8.0);
+    private class RegisterCardBody extends VBox {
 
-        TextInput fullNameInput = new TextInput(fullName, "Full Name");
-        cardBody.getChildren().addAll(fullNameInput.getLabel(), fullNameInput);
+        public RegisterCardBody() {
+            setStyles();
+            setChildren();
+        }
 
-        TextInput usernameInput = new TextInput(username, "Username");
-        cardBody.getChildren().addAll(usernameInput.getLabel(), usernameInput);
+        private void setStyles() {
+            setSpacing(8.0);
+            setChildren();
+        }
 
-        PasswordInput passwordInput = new PasswordInput(password, "Password");
-        cardBody.getChildren().addAll(passwordInput.getLabel(), passwordInput);
+        private void setChildren() {
+            TextInput fullNameInput = new TextInput(fullName, "Full Name");
+            TextInput usernameInput = new TextInput(username, "Username");
+            PasswordInput passwordInput = new PasswordInput(password, "Password");
+            PasswordInput verifyPasswordInput = new PasswordInput(verifyPassword, "Verify Password");
+            TextInput phoneNumberInput = new TextInput(phoneNumber, "Phone Number");
 
-        PasswordInput verifyPasswordInput = new PasswordInput(verifyPassword, "Confirm Password");
-        cardBody.getChildren().addAll(verifyPasswordInput.getLabel(), verifyPasswordInput);
-
-        TextInput phoneNumberInput = new TextInput(phoneNumber, "Phone Number");
-        cardBody.getChildren().addAll(phoneNumberInput.getLabel(), phoneNumberInput);
-        Label comboBoxLabel = new Label("Gender");
-        ComboBox comboBox = new ComboBox<String>();
-        comboBox.getStyleClass().add(Tweaks.ALT_ICON);
-        comboBox.setMaxSize(WIDTH, HEIGHT);
-        comboBox.setItems(FXCollections.observableArrayList(
-                "Male", "Female"
-        ));
-        comboBox.getSelectionModel().selectFirst();
-        gender.set(comboBox.getSelectionModel().getSelectedItem().toString());
-        comboBox.getSelectionModel().selectedItemProperty().addListener(e -> {
-            System.out.println("Before update gender: " + gender.getValue());
+            Label comboBoxLabel = new Label("Gender");
+            ComboBox comboBox = new ComboBox<String>();
+            comboBox.getStyleClass().add(Tweaks.ALT_ICON);
+            comboBox.setMaxSize(WIDTH, HEIGHT);
+            comboBox.setItems(FXCollections.observableArrayList(
+                    "Male", "Female"
+            ));
+            comboBox.getSelectionModel().selectFirst();
             gender.set(comboBox.getSelectionModel().getSelectedItem().toString());
-            System.out.println("After update gender: " + gender.getValue());
-        });
-        cardBody.getChildren().addAll(comboBoxLabel, comboBox);
+            comboBox.getSelectionModel().selectedItemProperty().addListener(e -> {
+                System.out.println("Before update gender: " + gender.getValue());
+                gender.set(comboBox.getSelectionModel().getSelectedItem().toString());
+                System.out.println("After update gender: " + gender.getValue());
+            });
 
-        Button uploadImageButton = new Button("Upload Profile Image");
-        uploadImageButton.setOnAction(e -> handleFileInput());
-        Label pathLabel = new Label("Select an Image ");
-        imagePath.addListener((_) -> {
-            pathLabel.setText("Selected Image: " + imagePath.getValue());
-        });
-        cardBody.getChildren().addAll(pathLabel, uploadImageButton);
+            Button uploadImageButton = new Button("Upload Profile Image");
+            uploadImageButton.setOnAction(e -> handleFileInput());
+            Label pathLabel = new Label("Select an Image ");
+            imagePath.addListener((_) -> {
+                pathLabel.setText("Selected Image: " + imagePath.getValue());
+            });
+            getChildren().addAll(fullNameInput, usernameInput, passwordInput, verifyPasswordInput, phoneNumberInput, comboBoxLabel, comboBox, pathLabel, uploadImageButton);
+        }
 
-        return cardBody;
     }
 
     private VBox createFooter() {
