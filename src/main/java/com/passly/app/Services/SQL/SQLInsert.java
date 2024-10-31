@@ -15,7 +15,7 @@ public class SQLInsert {
 
     private final StringBuilder query;
     private final List<Object> params;
-    private SQL.Table.Column[] columns;
+    private String[] columns;
 
     public SQLInsert() {
         this.query = new StringBuilder();
@@ -28,22 +28,16 @@ public class SQLInsert {
         return this;
     }
 
-    public SQLInsert table(SQL.Table table) {
-        query
-                .append("`")
-                .append(table.get())
-                .append("` ");
+    public SQLInsert table(Table table) {
+        query.append("`").append(table.getTableName()).append("` ");
         return this;
     }
 
-    public SQLInsert columns(SQL.Table.Column... columns) {
+    public SQLInsert columns(String... columns) {
         this.columns = columns;
         query.append("(");
         for (int i = 0; i < columns.length; i++) {
-            query
-                    .append("`")
-                    .append(columns[i].get())
-                    .append("`");
+            query.append("`").append(columns[i]).append("`");
             if (i < columns.length - 1) {
                 query.append(", ");
             }
@@ -60,7 +54,7 @@ public class SQLInsert {
 
         for (int i = 0; i < values.length; i++) {
             query.append("?");
-            if (i < values.length - 1) { // Check if its not the end of the list
+            if (i < values.length - 1) {
                 query.append(", ");
             }
             params.add(values[i]);

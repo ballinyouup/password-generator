@@ -5,12 +5,14 @@
 package com.passly.app.Models;
 
 import com.passly.app.Components.Password;
-import com.passly.app.Services.SQL.SQL;
+import com.passly.app.Services.SQL.UserTable;
 import java.sql.Blob;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.LinkedHashMap;
+import java.util.List;
 import java.util.Map;
+import javafx.beans.property.SimpleIntegerProperty;
 import javafx.beans.property.SimpleObjectProperty;
 import javafx.beans.property.SimpleStringProperty;
 import javafx.collections.FXCollections;
@@ -22,6 +24,7 @@ import javafx.collections.ObservableList;
  */
 public class User {
 
+    private final SimpleIntegerProperty id;
     private final SimpleStringProperty fullName;
     private final SimpleStringProperty username;
     private final SimpleStringProperty phoneNumber;
@@ -30,6 +33,7 @@ public class User {
     private final ObservableList<Password> passwords = FXCollections.observableArrayList();
 
     public User() {
+        this.id = new SimpleIntegerProperty(this, "ID", 0);
         this.fullName = new SimpleStringProperty(this, "Full Name", "");
         this.username = new SimpleStringProperty(this, "Username", "");
         this.phoneNumber = new SimpleStringProperty(this, "Phone Number", "");
@@ -37,7 +41,8 @@ public class User {
         this.image = new SimpleObjectProperty(this, "Image", null);
     }
 
-    public User(String fullName, String username, String phoneNumber, String gender, Blob image) {
+    public User(int id, String fullName, String username, String phoneNumber, String gender, Blob image) {
+        this.id = new SimpleIntegerProperty(this, "ID", id);
         this.fullName = new SimpleStringProperty(this, "Full Name", fullName);
         this.username = new SimpleStringProperty(this, "Username", username);
         this.phoneNumber = new SimpleStringProperty(this, "Phone Number", phoneNumber);
@@ -47,11 +52,16 @@ public class User {
 
     public static User fromResultSet(ResultSet rs) throws SQLException {
         return new User(
-                rs.getString(SQL.Table.Column.FULL_NAME.get()),
-                rs.getString(SQL.Table.Column.USERNAME.get()),
-                rs.getString(SQL.Table.Column.PHONE.get()),
-                rs.getString(SQL.Table.Column.GENDER.get()),
-                rs.getBlob(SQL.Table.Column.PICTURE.get()));
+                rs.getInt(UserTable.ID),
+                rs.getString(UserTable.FULL_NAME),
+                rs.getString(UserTable.USERNAME),
+                rs.getString(UserTable.PHONE),
+                rs.getString(UserTable.GENDER),
+                rs.getBlob(UserTable.PICTURE));
+    }
+
+    public int getId() {
+        return this.id.getValue();
     }
 
     public String getFullName() {
@@ -80,6 +90,10 @@ public class User {
 
     public ObservableList<Password> getPasswords() {
         return passwords;
+    }
+
+    public void setPasswords(List<Password> passwordList) {
+        passwords.setAll(passwordList);
     }
 
     public Map<String, SimpleStringProperty> getFields() {

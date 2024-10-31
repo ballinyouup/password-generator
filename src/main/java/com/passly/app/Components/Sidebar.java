@@ -6,6 +6,7 @@ package com.passly.app.Components;
 
 import atlantafx.base.controls.Card;
 import com.passly.app.Context;
+import com.passly.app.Route;
 import java.sql.Blob;
 import javafx.geometry.Pos;
 import javafx.scene.control.Label;
@@ -60,8 +61,9 @@ public class Sidebar extends Card {
 
         public SidebarBody() {
             setPrefWidth(USE_COMPUTED_SIZE);
-            setMaxWidth(Double.MAX_VALUE);
+            setMaxSize(Double.MAX_VALUE, Double.MAX_VALUE);
             setBorder(Context.DEBUG ? Border.stroke(Color.WHITE) : null);
+            getChildren().add(new Link(Route.LOGIN, "Logout"));
         }
 
     }

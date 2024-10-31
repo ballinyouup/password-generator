@@ -2,20 +2,25 @@
  * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
  * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Class.java to edit this template
  */
-package com.passly.app.Services.User;
+package com.passly.app.Services;
 
 import com.passly.app.Components.LoginCard;
+import com.passly.app.Components.Password;
+import com.passly.app.Models.User;
 import com.passly.app.Route;
 import com.passly.app.Router;
-import com.passly.app.Services.Database;
+import com.passly.app.Services.SQL.PasswordTable;
 import com.passly.app.Services.SQL.SQL;
 import com.passly.app.Services.SQL.SQLInsert;
 import com.passly.app.Services.SQL.SQLSelect;
+import com.passly.app.Services.SQL.UserTable;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Map;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -28,6 +33,9 @@ import javafx.scene.control.Alert;
  * @author bryan
  */
 public class UserService {
+
+    private static final SQL sql = new SQL(Database.getConnection());
+    private static final UserTable userTable = new UserTable();
 
     public static boolean verifyFields(Map<String, SimpleStringProperty> fields) {
         for (SimpleStringProperty field : fields.values()) {
@@ -42,16 +50,13 @@ public class UserService {
 
     public static boolean checkUsername(SimpleStringProperty username) {
         try {
-            SQL sql = new SQL(Database.getConnection());
-
-            SQLSelect select = new SQLSelect();
-            select.all()
-                    .from()
-                    .table(SQL.Table.USERS)
+            SQLSelect select = new SQLSelect()
+                    .all()
+                    .from(userTable)
                     .where()
-                    .equals(SQL.Table.Column.USERNAME, username.getValue());
+                    .equals(UserTable.USERNAME, username.getValue());
 
-            if (sql.executeSelect(select).next()) {
+            if (sql.executeQuery(select.getQuery(), select.getParams()).next()) {
                 Alert alert = new Alert(Alert.AlertType.WARNING, "This username is already taken. Choose another one");
                 alert.show();
                 return true;
@@ -65,18 +70,17 @@ public class UserService {
 
     public static ResultSet login(SimpleStringProperty username, SimpleStringProperty password) {
         try {
-            SQL sql = new SQL(Database.getConnection());
-
-            SQLSelect select = new SQLSelect();
-            select.all()
-                    .from()
-                    .table(SQL.Table.USERS)
+            SQLSelect select = new SQLSelect()
+                    .all()
+                    .from(userTable)
                     .where()
-                    .equals(SQL.Table.Column.USERNAME, username.getValue())
+                    .equals(UserTable.USERNAME, username.getValue())
                     .and()
-                    .equals(SQL.Table.Column.PASSWORD, password.getValue());
+                    .equals(UserTable.PASSWORD, password.getValue());
 
-            ResultSet rs = sql.executeSelect(select);
+            System.out.println("Generated SQL Query: " + select.getQuery());
+
+            ResultSet rs = sql.executeQuery(select.getQuery(), select.getParams());
 
             if (rs.next()) {
                 return rs;
@@ -93,22 +97,20 @@ public class UserService {
 
     public static void registerUser(Map<String, SimpleStringProperty> fields, SimpleObjectProperty image) {
         if (verifyFields(fields) && !checkUsername(fields.get("Username"))) {
-            SQL sql = new SQL(Database.getConnection());
-            SQLInsert insert = new SQLInsert();
             try {
                 if (fields.get("Image Path").getValue() != null) {
                     image.set(new FileInputStream(new File(fields.get("Image Path").getValue())));
                 }
 
-                insert
-                        .table(SQL.Table.USERS)
-                        .columns(SQL.Table.Column.FULL_NAME, SQL.Table.Column.USERNAME,
-                                SQL.Table.Column.PASSWORD, SQL.Table.Column.PHONE,
-                                SQL.Table.Column.GENDER, SQL.Table.Column.PICTURE)
-                        .values(fields.get("Full Name").get(), fields.get("Username").get(), fields.get("Password").get(),
-                                fields.get("Phone Number").get(), fields.get("Gender").get(), image.get());
+                SQLInsert insert = new SQLInsert()
+                        .table(userTable)
+                        .columns(UserTable.FULL_NAME, UserTable.USERNAME, UserTable.PASSWORD,
+                                UserTable.PHONE, UserTable.GENDER, UserTable.PICTURE)
+                        .values(fields.get("Full Name").get(), fields.get("Username").get(),
+                                fields.get("Password").get(), fields.get("Phone Number").get(),
+                                fields.get("Gender").get(), image.get());
 
-                if (sql.executeInsert(insert) != 0) {
+                if (sql.executeUpdate(insert.getQuery(), insert.getParams()) != 0) {
                     Alert alert = new Alert(Alert.AlertType.INFORMATION, "Your Account has been created!");
                     alert.show();
                     Router.push(Route.LOGIN);
@@ -126,4 +128,46 @@ public class UserService {
         }
     }
 
+    public static List<Password> loadUserPasswords(int userId) {
+        List<Password> passwordList = new ArrayList<>();
+        try {
+            SQLSelect select = new SQLSelect()
+                    .all()
+                    .from(new PasswordTable())
+                    .where()
+                    .equals(PasswordTable.USER_ID, userId);
+
+            ResultSet rs = sql.executeQuery(select.getQuery(), select.getParams());
+            while (rs.next()) {
+                Password password = new Password(rs.getString(PasswordTable.STORED_PASSWORD));
+                System.out.println("Retrieved password: " + password.getPassword());
+                passwordList.add(password);
+            }
+        } catch (SQLException ex) {
+            System.err.println("SQL Error: " + ex.getMessage());
+        }
+        return passwordList;
+    }
+
+    public static User loadUserWithPasswords(int userId) {
+        try {
+            // Query user info
+            SQLSelect select = new SQLSelect()
+                    .all()
+                    .from(userTable)
+                    .where()
+                    .equals(UserTable.ID, userId);
+
+            ResultSet rs = sql.executeQuery(select.getQuery(), select.getParams());
+            if (rs.next()) {
+                User user = User.fromResultSet(rs);
+                List<Password> passwords = loadUserPasswords(userId);
+                user.setPasswords(passwords);
+                return user;
+            }
+        } catch (SQLException ex) {
+            System.err.println("SQL Error: " + ex.getMessage());
+        }
+        return null;
+    }
 }

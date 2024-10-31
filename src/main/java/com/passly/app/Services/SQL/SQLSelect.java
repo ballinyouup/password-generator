@@ -32,16 +32,19 @@ public class SQLSelect {
         return this;
     }
 
-    public SQLSelect from() {
-        query.append("FROM ");
+    public SQLSelect column(String column) {
+        if (query.toString().contains("SELECT ")) {
+            // Remove the last comma and space if exists before adding a new column
+            if (query.toString().endsWith(", ")) {
+                query.setLength(query.length() - 2); // Remove last comma and space
+            }
+            query.append("`").append(column).append("`, ");
+        }
         return this;
     }
 
-    public SQLSelect table(SQL.Table table) {
-        query
-                .append("`")
-                .append(table.get())
-                .append("` ");
+    public SQLSelect from(Table table) {
+        query.append("FROM `").append(table.getTableName()).append("` ");
         return this;
     }
 
@@ -55,17 +58,23 @@ public class SQLSelect {
         return this;
     }
 
-    public SQLSelect equals(SQL.Table.Column column, Object value) {
-        query
-                .append("`")
-                .append(column.get())
-                .append("` = ? ");
+    public SQLSelect equals(String column, Object value) {
+        query.append("`").append(column).append("` = ? ");
         params.add(value);
         return this;
     }
 
     public String getQuery() {
-        return query.toString().trim();
+        // Remove trailing comma and space from the SELECT statement
+        if (query.toString().endsWith(", ")) {
+            query.setLength(query.length() - 2); // Remove last comma and space
+        }
+        // Ensure SELECT clause is complete
+        if (query.toString().contains("SELECT")) {
+            return query.toString().trim();
+        } else {
+            throw new IllegalStateException("SQL query is malformed: " + query);
+        }
     }
 
     public List<Object> getParams() {

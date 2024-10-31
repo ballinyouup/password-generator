@@ -12,7 +12,7 @@ import atlantafx.base.controls.Card;
 import atlantafx.base.theme.Styles;
 import atlantafx.base.theme.Tweaks;
 import com.passly.app.Route;
-import com.passly.app.Services.User.UserService;
+import com.passly.app.Services.UserService;
 import java.io.File;
 import java.io.InputStream;
 import java.util.LinkedHashMap;

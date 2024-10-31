@@ -14,15 +14,14 @@ import com.passly.app.Context;
 import com.passly.app.Models.User;
 import com.passly.app.Route;
 import com.passly.app.Router;
-import com.passly.app.Services.User.UserService;
+import com.passly.app.Services.SQL.UserTable;
+import com.passly.app.Services.UserService;
 import java.sql.ResultSet;
-import java.sql.SQLException;
 import java.util.LinkedHashMap;
 import java.util.Map;
 import javafx.beans.property.SimpleStringProperty;
 import javafx.scene.control.Alert;
 import javafx.scene.control.Button;
-import javafx.scene.control.Label;
 import javafx.scene.layout.VBox;
 
 public class LoginCard extends Card {
@@ -110,19 +109,21 @@ public class LoginCard extends Card {
             } else {
                 ResultSet dataFromServer = UserService.login(username, password);
                 if (dataFromServer != null) {
-                    loginSuccess(dataFromServer);
+                    int userId = dataFromServer.getInt(UserTable.ID);
+                    User user = UserService.loadUserWithPasswords(userId);
+                    if (user != null) {
+                        Context.setUser(user);
+                        Router.push(Route.DASHBOARD);
+                    } else {
+                        Alert alert = new Alert(Alert.AlertType.ERROR, "Failed to load user data.");
+                        alert.show();
+                    }
                 }
             }
         } catch (Exception e) {
             Alert alert = new Alert(Alert.AlertType.WARNING, e.getMessage());
             alert.show();
         }
-
-    }
-
-    private void loginSuccess(ResultSet rs) throws SQLException {
-        Context.setUser(User.fromResultSet(rs));
-        Router.push(Route.DASHBOARD);
     }
 
     public Map<String, SimpleStringProperty> getFields() {

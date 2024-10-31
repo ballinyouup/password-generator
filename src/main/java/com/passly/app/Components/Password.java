@@ -7,6 +7,7 @@ package com.passly.app.Components;
 import java.security.SecureRandom;
 import java.util.ArrayList;
 import java.util.List;
+import javafx.beans.property.SimpleIntegerProperty;
 import javafx.beans.property.SimpleStringProperty;
 
 /**
@@ -15,6 +16,7 @@ import javafx.beans.property.SimpleStringProperty;
  */
 public class Password {
 
+//    private final SimpleIntegerProperty id = new SimpleIntegerProperty(this, "ID", 0);
     private static final String ALPHABET = "abcdefghijklmnopqrstuvwxyz";
     private static final String SYMBOLS = "`~!@#$%^&*()_=+{};:',.?/";
     private static final String NUMBERS = "0123456789";
@@ -27,10 +29,17 @@ public class Password {
         generate(length, includeSymbols, includeNumbers, includeUpperCase);
     }
 
-    public Password(String password) {
+    public Password(
+            //            int id,
+            String password
+    ) {
+//        this.id.set(id);
         this.password.set(password);
     }
 
+//    public int getId() {
+//        return this.id.getValue();
+//    }
     public SimpleStringProperty getPasswordProperty() {
         return password;
     }

@@ -8,11 +8,11 @@ import atlantafx.base.controls.Card;
 import atlantafx.base.controls.ProgressSliderSkin;
 import atlantafx.base.theme.Styles;
 import com.passly.app.Context;
-import com.passly.app.Route;
-import com.passly.app.Router;
+import com.passly.app.Services.PasswordService;
 import javafx.beans.property.SimpleIntegerProperty;
 import javafx.beans.property.SimpleStringProperty;
 import javafx.geometry.Pos;
+import javafx.scene.control.Alert;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.Slider;
@@ -54,7 +54,7 @@ public class PasswordGeneratorCard extends Card {
             length.addListener(e -> {
                 lengthLabel.setText("Length: " + length.getValue().toString());
             });
-            getChildren().addAll(new GeneratedPasswordText(), lengthLabel, new PasswordSlider(0, 24, 16, 4, 12, 4));
+            getChildren().addAll(new GeneratedPasswordText(), lengthLabel, new PasswordSlider(8, 24, 16, 4, 12, 4));
         }
 
         private class GeneratedPasswordText extends TextArea {
@@ -148,17 +148,27 @@ public class PasswordGeneratorCard extends Card {
                 setText("SAVE");
                 setStyles();
                 setHandlers();
-
             }
 
             private void setStyles() {
                 getStyleClass().add(Styles.LARGE);
-
             }
 
             private void setHandlers() {
                 setOnMouseClicked(e -> {
-                    Context.getUser().addPassword(new Password(generatedPassword.getValue()));
+                    Password newPassword = new Password(generatedPassword.getValue());
+                    Context.getUser().addPassword(newPassword);
+
+                    boolean success = PasswordService.createPassword(
+                            Context.getUser().getId(),
+                            newPassword.getPassword()
+                    );
+
+                    if (!success) {
+                        Alert alert = new Alert(Alert.AlertType.ERROR, "Failed to save password to the database.");
+                        alert.show();
+                    }
+
                     generatedPassword.set(new Password(length.getValue(), true, true, true).getPassword());
                 });
             }
