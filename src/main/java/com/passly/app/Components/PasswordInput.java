@@ -6,7 +6,7 @@ package com.passly.app.Components;
 
 import javafx.beans.property.SimpleStringProperty;
 import javafx.scene.control.Label;
-import javafx.scene.control.TextField;
+import javafx.scene.control.PasswordField;
 import javafx.scene.layout.VBox;
 
 /**
@@ -16,10 +16,10 @@ import javafx.scene.layout.VBox;
 public class PasswordInput extends VBox {
 
     public PasswordInput(SimpleStringProperty password, String labelText) {
-        TextField textInput = new TextField();
-        textInput.textProperty().bindBidirectional(password);
+        PasswordField passwordInput = new PasswordField();
+        passwordInput.textProperty().bindBidirectional(password);
         Label label = new Label(labelText);
         label.setStyle("-fx-font: 14px Poppins");
-        getChildren().addAll(label, textInput);
+        getChildren().addAll(label, passwordInput);
     }
 }

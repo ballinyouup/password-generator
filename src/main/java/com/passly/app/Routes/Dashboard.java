@@ -102,8 +102,7 @@ public class Dashboard extends StackPane {
                     if (change.wasRemoved()) {
                         for (Password password : change.getRemoved()) {
                             passwordItemsContainer.getChildren().removeIf(node -> {
-                                if (node instanceof Card) {
-                                    Card card = (Card) node;
+                                if (node instanceof Card card) {
                                     TextArea passwordText = (TextArea) card.getBody();
                                     return passwordText.getText().equals(password.getPassword());
                                 }

@@ -77,8 +77,11 @@ public class Sidebar extends Card {
             setAlignment(Pos.CENTER_LEFT);
             setBorder(Context.DEBUG ? Border.stroke(Color.WHITE) : null);
 
-            Blob blob = (Blob) Context.getUser().getImageProperty().getValue();
-            Picture image = Picture.createRounded(blob, 40);
+            if (Context.getUser().getImageProperty().isNotNull().get()) {
+                Blob blob = (Blob) Context.getUser().getImageProperty().getValue();
+                Picture image = Picture.createRounded(blob, 40);
+                getChildren().add(image);
+            }
 
             VBox textContainer = new VBox();
             Label name = new Label(Context.getUser().getFullName());
@@ -89,7 +92,7 @@ public class Sidebar extends Card {
             HBox.setHgrow(username, Priority.ALWAYS);
 
             textContainer.getChildren().addAll(name, username);
-            getChildren().addAll(image, textContainer);
+            getChildren().addAll(textContainer);
         }
 
     }

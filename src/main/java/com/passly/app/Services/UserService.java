@@ -98,8 +98,11 @@ public class UserService {
     public static void registerUser(Map<String, SimpleStringProperty> fields, SimpleObjectProperty image) {
         if (verifyFields(fields) && !checkUsername(fields.get("Username"))) {
             try {
-                if (fields.get("Image Path").getValue() != null) {
+                // Check if the image path is set
+                if (fields.get("Image Path").getValue() != null && !fields.get("Image Path").getValue().isEmpty()) {
                     image.set(new FileInputStream(new File(fields.get("Image Path").getValue())));
+                } else {
+                    image.set(null); // No image provided
                 }
 
                 SQLInsert insert = new SQLInsert()

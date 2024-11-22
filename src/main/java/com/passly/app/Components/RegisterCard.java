@@ -74,6 +74,27 @@ public class RegisterCard extends Card {
             PasswordInput verifyPasswordInput = new PasswordInput(verifyPassword, "Verify Password");
             TextInput phoneNumberInput = new TextInput(phoneNumber, "Phone Number");
 
+            // Add a listener to format the phone number
+            phoneNumberInput.getTextField().textProperty().addListener((observable, oldValue, newValue) -> {
+                // Format as (XXX) XXX-XXXX
+                String formattedNumber = newValue.replaceAll("[^\\d]", ""); // Remove non-digit characters
+                if (formattedNumber.length() > 3 && formattedNumber.length() <= 6) {
+                    formattedNumber = "(" + formattedNumber.substring(0, 3) + ") " + formattedNumber.substring(3);
+                } else if (formattedNumber.length() > 6) {
+                    formattedNumber = "(" + formattedNumber.substring(0, 3) + ") " + formattedNumber.substring(3, 6) + "-" + formattedNumber.substring(6);
+                }
+                // Prevent excessive length
+                if (formattedNumber.length() > 14) {
+                    formattedNumber = formattedNumber.substring(0, 14);
+                }
+
+                phoneNumber.set(formattedNumber);
+                phoneNumberInput.getTextField().setText(formattedNumber);
+
+                // Maintain cursor position
+                phoneNumberInput.getTextField().positionCaret(formattedNumber.length());
+            });
+
             Label comboBoxLabel = new Label("Gender");
             ComboBox comboBox = new ComboBox<String>();
             comboBox.getStyleClass().add(Tweaks.ALT_ICON);

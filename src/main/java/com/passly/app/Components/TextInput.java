@@ -15,11 +15,17 @@ import javafx.scene.layout.VBox;
  */
 public class TextInput extends VBox {
 
+    private final TextField textInput;
+
     public TextInput(SimpleStringProperty value, String labelText) {
-        TextField textInput = new TextField();
+        textInput = new TextField();
         textInput.textProperty().bindBidirectional(value);
         Label label = new Label(labelText);
         label.setStyle("-fx-font: 14px Poppins");
         getChildren().addAll(label, textInput);
+    }
+
+    public TextField getTextField() {
+        return this.textInput;
     }
 }
